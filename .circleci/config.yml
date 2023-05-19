@@ -1,0 +1,36 @@
+version: 2.1
+
+setup: true
+
+orbs:
+  continuation: circleci/continuation@0.2.0
+
+executors:
+  base:
+    docker:
+      - image: cimg/base:latest
+        user: root
+
+jobs:
+  check-for-pr:
+    executor: base
+    steps:
+      - run: |
+          if [[ $CIRCLE_PULL_REQUEST ]]; then
+            circleci-agent step halt
+          fi
+      - continuation/continue:
+          configuration_path: .circleci/deployment-workflow.yml
+  docker-build:
+    executor: base
+    steps:
+      - run: echo "Building Docker"
+
+workflows:
+  main:
+    jobs:
+      - check-for-pr
+      - docker-build:
+          filters:
+            tags:
+              only: /^v.*/

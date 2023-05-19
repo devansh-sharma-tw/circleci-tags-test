@@ -1,0 +1,24 @@
+version: 2.1
+
+executors:
+  base:
+    docker:
+      - image: cimg/base:latest
+        user: root
+
+jobs:
+  e2e-tests:
+    executor: base
+    steps:
+      - checkout
+      - run:
+          name: Run e2e test cases
+          command: echo "run e2e"
+
+workflows:
+  build-and-deploy:
+    jobs:
+      - e2e-tests:
+          filters:
+            branches:
+              only: master
