@@ -12,6 +12,11 @@ executors:
         user: root
 
 jobs:
+  random:
+    executor: base
+    steps:
+      - run:
+          echo "random"
   check-for-pr:
     executor: base
     steps:
@@ -30,7 +35,12 @@ jobs:
 workflows:
   main:
     jobs:
-      - check-for-pr
+      - random
+      - approve-docker-build:
+          type: approval
+      - check-for-pr:
+          requires:
+            - approve-docker-build
       - docker-build:
           filters:
             tags:
