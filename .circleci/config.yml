@@ -2,9 +2,6 @@ version: 2.1
 
 setup: true
 
-orbs:
-  continuation: circleci/continuation@0.2.0
-
 executors:
   base:
     docker:
@@ -16,34 +13,9 @@ jobs:
     executor: base
     steps:
       - run:
-          echo "random"
-  check-for-pr:
-    executor: base
-    steps:
-      - checkout
-      - run: |
-          if [[ $CIRCLE_PULL_REQUEST ]]; then
-            circleci-agent step halt
-          fi
-      - continuation/continue:
-          configuration_path: .circleci/deployment-workflow.yml
-  docker-build:
-    executor: base
-    steps:
-      - run: echo "Building Docker"
+          echo << pipeline.parameters >>
 
 workflows:
   main:
     jobs:
       - random
-      - approve-docker-build:
-          type: approval
-      - check-for-pr:
-          requires:
-            - approve-docker-build
-      - docker-build:
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
