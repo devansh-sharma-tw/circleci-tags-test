@@ -18,7 +18,7 @@ jobs:
     executor: base
     steps:
       - run:
-          echo << pipeline.parameters >>
+          echo << pipeline.parameters.modules >>
 
 workflows:
   main:
